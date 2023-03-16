@@ -17,7 +17,7 @@ services:
     build:
       context: .
       dockerfile: .docker/node/consumer/Dockerfile
-    command: ["npm", "run", "consumer:dev"]
+    command: ["npm", "run", "start:consumer"]
     volumes: 
       - app-source:/usr/src/app
     depends_on:

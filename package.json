@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "tsc": "tsc",
+    "nodemon": "nodemon --exec ts-node src/index.ts",
+    "start:dev": "nodemon --watch src --ext ts -L --exec npm run nodemon",
+    "start:consumer": "nodemon --watch src --ext ts -L --exec npm run nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
