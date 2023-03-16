@@ -1,0 +1,47 @@
+version: '3.9'
+services:
+  app:
+    tty: true
+    build:
+      context: .
+      dockerfile: .docker/node/app/Dockerfile
+    command: ["npm", "run", "start:dev"]
+    volumes: 
+      - app-source:/usr/src/app
+    depends_on:
+      - rabbitmq
+      - mongo
+
+  consumer:
+    tty: true
+    build:
+      context: .
+      dockerfile: .docker/node/consumer/Dockerfile
+    command: ["npm", "run", "consumer:dev"]
+    volumes: 
+      - app-source:/usr/src/app
+    depends_on:
+      - rabbitmq
+      - mongo
+
+  mongo:
+    build:
+      context: .
+      dockerfile: .docker/mongo/Dockerfile
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB_PASSWORD}
+
+  rabbitmq: 
+    image: rabbitmq:3.9-management
+    restart: unless-stopped
+    tty: true
+    environment:
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
