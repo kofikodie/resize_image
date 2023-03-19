@@ -4,13 +4,10 @@ services:
   app:
     ports:
       - "8888:8888"
-  mongo:
-    ports:
-      - "27017:27017"
-  rabbitmq:
-    ports:
-      - "5672:5672"
-      - "15672:15672
+  localstack:
+    ports: 
+      - "4566:4566"
+      - "4582:4582"
 
 volumes:
   app-source:
@@ -19,15 +16,9 @@ volumes:
       type: none
       o: bind
       device: '${PWD}'
-  mongo-data:
+  localstack-data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: '${PWD}/.docker/mongo/data'
-  rabbitmq-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: '${PWD}/.docker/mongodb/data'
+      device: '${PWD}'
