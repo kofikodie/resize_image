@@ -7,41 +7,34 @@ services:
       dockerfile: .docker/node/app/Dockerfile
     command: ["npm", "run", "start:dev"]
     volumes: 
-      - app-source:/usr/src/app
+      - app-source:/app
+    environment:
+      QUEUE_URL: ${QUEUE_URL}
+      QUEUE_NAME: ${QUEUE_NAME}
     depends_on:
-      - rabbitmq
-      - mongo
+      - localstack
 
   consumer:
     tty: true
     build:
       context: .
-      dockerfile: .docker/node/consumer/Dockerfile
+      dockerfile: .docker/node/app/Dockerfile
     command: ["npm", "run", "start:consumer"]
     volumes: 
-      - app-source:/usr/src/app
+      - app-source:/app
+    environment:
+      QUEUE_URL: ${QUEUE_URL}
+      QUEUE_NAME: ${QUEUE_NAME}
     depends_on:
-      - rabbitmq
-      - mongo
-
-  mongo:
-    build:
-      context: .
-      dockerfile: .docker/mongo/Dockerfile
-    volumes:
-      - mongo-data:/data/db
-    restart: unless-stopped
+      - localstack
+  
+  localstack:
+    image: localstack/localstack:latest
     environment:
-      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB_PASSWORD}
-
-  rabbitmq: 
-    image: rabbitmq:3.9-management
-    restart: unless-stopped
-    tty: true
-    environment:
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
-      RABBITMQ_USER: ${RABBITMQ_USER}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+      EDGE_PORT: ${EDGE_PORT}
+      SERVICES: sqs,s3
+      DEBUG: 1
     volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
+      - /var/run/docker.sock:/var/run/docker.sock
+      - localstack-data:/tmp/localstack
