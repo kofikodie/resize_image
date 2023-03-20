@@ -28,8 +28,6 @@ cron.schedule('*/10 * * * * *', async () => {
         return;
     }
 
-    console.log('Image downloaded from bucket');
-    
     const resizedBuffer = await new ResizeImageAdapter().resizeImage(imageBuffer, 100, 100);
     console.log(imageBuffer);
     const newKey = await s3.storeImage(resizedBuffer, `resized_${imageKey.Body}`, process.env.BUCKET_NAME, imageKey.Body);

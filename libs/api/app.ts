@@ -9,7 +9,7 @@ import fs from 'fs';
 const app = express();
 app.use(fileUpload());
 
-app.get('/health', (req, res) => {
+app.get('/healthy', (req, res) => {
     res.status(200).send('OK');
 });
 

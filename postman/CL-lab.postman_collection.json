@@ -1,0 +1,88 @@
+{
+	"info": {
+		"_postman_id": "6ee5a3db-a9f4-4ac3-bf93-2a338104e2e8",
+		"name": "CL-lab",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26211282"
+	},
+	"item": [
+		{
+			"name": "healthy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8888/healthy",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"healthy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upload",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": [
+								"/Users/kofiaddo/Documents/GitHub/cogent-labs/postman/Flag_of_Japan.svg.png",
+								"/Users/kofiaddo/Documents/GitHub/cogent-labs/postman/ghana-5ft-x-3ft-flag-1-756-p.jpg",
+								"/Users/kofiaddo/Documents/GitHub/cogent-labs/postman/crest.jpg"
+							]
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8888/upload?image",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"upload"
+					],
+					"query": [
+						{
+							"key": "image",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "download",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8888/download/43581c1a-70f1-4f0b-a355-df7ba6c7c7b9",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"download",
+						"43581c1a-70f1-4f0b-a355-df7ba6c7c7b9"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
