@@ -1,7 +1,7 @@
 import request from 'supertest';
-import app from '../libs/api/app';
-import S3Adapter from '../libs/S3Adapter';
-import SQSAdapter from '../libs/SqsAdapter';
+import app from '../src/app';
+import S3Adapter from '../src/adapters/S3Adapter';
+import SQSAdapter from '../src/adapters/SqsAdapter';
 
 describe('POST /upload', () => {
     beforeAll(() => {
@@ -85,7 +85,7 @@ describe('POST /upload', () => {
         );
 
         const messages = await Promise.all(testImages.map(async (image) => {
-            const message = await sqs.getMessage();
+            const message: any = await sqs.getMessage();
             expect(message).toBeDefined();
             return message;
             }));
