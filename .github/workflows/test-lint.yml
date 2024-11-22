@@ -3,25 +3,18 @@ name: Test and lint
 on:
   push:
     branches:
-      - '*'
+      - "*"
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      # Checkout the repository
       - uses: actions/checkout@v4
-
-      # Build the Docker image
-      - name: Build the image
-        run: |
-          docker compose build -t app .
-      # Run tests in a Docker container
-      - name: Run tests
-        run: |
-          cp .env.dist .env
-          cp docker-compose.override.yml.dist docker-compose.override.yml
-          docker compose run -v $(pwd):/app -w /app app npm test
+      - uses: adambirds/docker-compose-action@v1.5.0
+        with:
+          compose-file: "./docker-compose.yml"
+          test-container: "app"
+          test-command: "npm test"
   #lint:
   #  runs-on: ubuntu-latest
   #  steps:
