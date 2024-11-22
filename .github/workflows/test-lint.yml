@@ -10,14 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: |
+          cp .env.dist .env
+          cp docker-compose.override.yml.dist docker-compose.override.yml
       - uses: adambirds/docker-compose-action@v1.5.0
         with:
           compose-file: "./docker-compose.yml"
           test-container: "container1"
           test-command: "npm test"
-      - run: |
-          cp .env.dist .env
-          cp docker-compose.override.yml.dist docker-compose.override.yml
+
   #lint:
   #  runs-on: ubuntu-latest
   #  steps:
