@@ -18,18 +18,3 @@ jobs:
           compose-file: "./docker-compose-ci.yml"
           test-container: "app"
           test-command: "npm test"
-
-  #lint:
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    # Checkout the repository
-  #    - uses: actions/checkout@v2
-
-  #    # Build the Docker image
-  #    - name: Build the image
-  #      run: |
-  #        docker-compose build -t app .
-  #    # Run linting in a Docker container
-  #    - name: Run linting
-  #      run: |
-  #        docker-compose run -v $(pwd):/app -w /app app npm run lint
