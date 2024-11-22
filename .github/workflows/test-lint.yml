@@ -15,7 +15,7 @@ jobs:
           cp docker-compose.override.yml.dist docker-compose.override.yml
       - uses: adambirds/docker-compose-action@v1.5.0
         with:
-          compose-file: "./docker-compose.yml"
+          compose-file: "./docker-compose-ci.yml"
           test-container: "container1"
           test-command: "npm test"
 
