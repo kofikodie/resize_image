@@ -38,10 +38,7 @@ app.post('/upload', async (req, res) => {
         }
     }    
 
-    return res.status(200).send(({
-        context: "images uploaded succefully",
-        imageKey: {...imagesKeys}
-    }));
+    return res.status(200).send(imagesKeys);
 });
 
 app.get('/download/:key', async (req, res) => {
