@@ -12,9 +12,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: adambirds/docker-compose-action@v1.5.0
         with:
-          compose-file: "./docker-compose.yml"
-          test-container: "app"
+          compose-file: "./docker/docker-compose.yml"
+          test-container: "container1"
           test-command: "npm test"
+      - run: |
+          cp .env.dist .env
+          cp docker-compose.override.yml.dist docker-compose.override.yml
   #lint:
   #  runs-on: ubuntu-latest
   #  steps:
