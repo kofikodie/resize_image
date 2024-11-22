@@ -1,0 +1,38 @@
+name: Test and lint
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository
+      - uses: actions/checkout@v2
+
+      # Build the Docker image
+      - name: Build the image
+        run: |
+          docker-compose build -t app .
+      # Run tests in a Docker container
+      - name: Run tests
+        run: |
+          cp .env.dist .env
+          cp docker-compose.override.yml.dist docker-compose.override.yml
+          docker-compose run -v $(pwd):/app -w /app app npm test
+  #lint:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    # Checkout the repository
+  #    - uses: actions/checkout@v2
+
+  #    # Build the Docker image
+  #    - name: Build the image
+  #      run: |
+  #        docker-compose build -t app .
+  #    # Run linting in a Docker container
+  #    - name: Run linting
+  #      run: |
+  #        docker-compose run -v $(pwd):/app -w /app app npm run lint
