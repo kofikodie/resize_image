@@ -1,0 +1,55 @@
+name: Deploy to ECR and update Argo CI manifest
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository
+      - uses: actions/checkout@v2
+
+      # Get the SHA of the commit
+      - name: Get commit SHA
+        id: commit_sha
+        run: echo "::set-output name=sha::$(echo ${GITHUB_SHA})"
+
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      # Login to ECR
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+  
+      # Build the Docker image
+      - name: Build, tag, and push image to ECR 
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: isolates
+          IMAGE_TAG: ${{ steps.commit_sha.outputs.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.commit_sha.outputs.sha }}
+      # Checkout the repository
+      - uses: actions/checkout@v2
+
+      # Clone the repository containing the Argo CI manifest, update the image tag and push the changes
+      - name: Update Argo CI manifest
+        run: |
+          ls
+          sed -i "s|image: .*|image: ${{ steps.login-ecr.outputs.registry }}/isolates:${{ steps.commit_sha.outputs.sha }}|g" charts/iso-ds.yml
+      
+      - name: Commit and push changes
+        uses: devops-infra/action-commit-push@v0.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_message: Bump image tag to ${{ steps.commit_sha.outputs.sha }}

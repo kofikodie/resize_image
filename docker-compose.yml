@@ -8,11 +8,12 @@ services:
     command: ["npm", "run", "start:dev"]
     volumes:
       - app-source:/app
-    environment:
-      QUEUE_URL: ${QUEUE_URL}
-      QUEUE_NAME: ${QUEUE_NAME}
+    ports:
+      - "8888:8888"
     depends_on:
       - localstack
+    env_file:
+      - .env
 
   localstack:
     container_name: localstack

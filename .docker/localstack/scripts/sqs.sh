@@ -3,7 +3,7 @@
 # Function to create a queue
 create_queue() {
     local QUEUE_NAME=$1
-    awslocal sqs create-queue --queue-name "${QUEUE_NAME}" # Command to create sqs queue
+    awslocal sqs create-queue --queue-name "${QUEUE_NAME}" --region us-east-1 # Command to create sqs queue
 }
 
 echo "++ Creating SQS Queues now..."
