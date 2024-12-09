@@ -30,7 +30,7 @@ spec:
           periodSeconds: 10
         readinessProbe:
           httpGet:
-            path: /healthz
+            path: /healthy
             port: liveness-port
           failureThreshold: 1
           initialDelaySeconds: 5
