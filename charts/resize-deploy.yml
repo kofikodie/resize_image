@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: resize-deploy
+  name: resize-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resize-deploy
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: resize-deploy
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+        livenessProbe:
+          exec:
+            command:
+            - cat
+            - src/index.js
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: liveness-port
+          failureThreshold: 1
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+        - name: AWS_DEFAULT_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: resize-cm
+              key: AWS_DEFAULT_REGION
+        - name: QUEUE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: resize-cm
+              key: QUEUE_NAME
+        - name: QUEUE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: resize-cm
+              key: QUEUE_URL
+        - name: BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: resize-cm
+              key: BUCKET_NAME
+        - name: BUCKET_NAME_TMP
+          valueFrom:
+            configMapKeyRef:
+              name: resize-cm
+              key: BUCKET_NAME_TMP
+status: {}
