@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: resize-deploy
+    app.kubernetes.io/instance: resize-api
+  name: resize-deploy
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8888
+  selector:
+    app: resize-deploy
+status:
+  loadBalancer: {}
