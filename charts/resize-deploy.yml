@@ -16,7 +16,7 @@ spec:
         app: resize-deploy
     spec:
       containers:
-      - image: 317884193661.dkr.ecr.eu-west-1.amazonaws.com/resize-cluster:e4687496dd41df3fbbb51f6ce22cf9ccc3f3c229
+      - image: 317884193661.dkr.ecr.eu-west-1.amazonaws.com/resize-cluster:ff6802603033709f51c52f8d2affcc1fd0efc20f
         name: nginx
         resources: {}
         livenessProbe:
