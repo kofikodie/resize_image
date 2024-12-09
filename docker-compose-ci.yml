@@ -4,7 +4,7 @@ services:
     tty: true
     build:
       context: .
-      dockerfile: .docker/node/Dockerfile
+      dockerfile: .docker/node/dev/Dockerfile
     command: ["npm", "run", "start:dev"]
     ports:
       - "8888:8888"
