@@ -29,3 +29,7 @@ COPY --from=build /app/package*.json ./
 COPY --from=build /app/src ./
 
 ENV RUNNING_ENV="prod"
+
+EXPOSE 8888
+
+CMD [ "node", "index.js" ]

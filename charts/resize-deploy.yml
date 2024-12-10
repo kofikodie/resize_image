@@ -9,7 +9,11 @@ spec:
   selector:
     matchLabels:
       app: resize-deploy
-  strategy: {}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -19,19 +23,25 @@ spec:
       - image: 317884193661.dkr.ecr.eu-west-1.amazonaws.com/resize-cluster:06b7c74811c178bea2fe1873d698aa9bfe4cc686
         name: resize-api
         ports:
-          - containerPort: 3000 
-        resources: {}
+          - containerPort: 8888 
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "500m"
+          limits:
+            memory: "256Mi"
+            cpu: "1"
         livenessProbe:
-          exec:
-            command:
-            - cat
-            - src/index.js
+          httpGet:
+            path: /healthy
+            port: 8888
+          failureThreshold: 1
           initialDelaySeconds: 5
           periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /healthy
-            port: liveness-port
+            port: 8888
           failureThreshold: 1
           initialDelaySeconds: 5
           periodSeconds: 10
