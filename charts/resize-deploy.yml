@@ -72,6 +72,4 @@ spec:
             configMapKeyRef:
               name: resize-cm
               key: BUCKET_NAME_TMP
-        - name: RUNNING_ENV
-          value: "production"
 status: {}
