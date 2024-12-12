@@ -20,7 +20,7 @@ spec:
         app: resize-deploy
     spec:
       containers:
-      - image: 317884193661.dkr.ecr.eu-west-1.amazonaws.com/resize-cluster:17b68d7d05238fc32c0eaf00e0497598d2be17ce
+      - image: 317884193661.dkr.ecr.eu-west-1.amazonaws.com/resize-cluster:6ddc77301410ae6eed0b0e36d7c34bbe4dc3d46b
         name: resize-api
         ports:
           - containerPort: 8888 
