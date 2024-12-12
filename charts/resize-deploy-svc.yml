@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/instance: resize-api
   name: resize-deploy
 spec:
+  type: ClusterIP
   ports:
   - port: 80
     protocol: TCP
