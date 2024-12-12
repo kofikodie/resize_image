@@ -5,37 +5,23 @@ import {
 } from "@aws-sdk/client-sqs";
 import * as dotenv from "dotenv";
 import { SqsAdapterInterface } from "./SqsAdapterInterface";
-import winston from "winston";
+import { LoggerInterface } from "../utils/logger/LoggerInterface";
 
 dotenv.config();
 
-const logger = winston.createLogger({
-    level: "info",
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json()
-    ),
-    transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: "error.log", level: "error" }),
-        new winston.transports.File({ filename: "combined.log" }),
-    ],
-});
-
-interface Message {
-    Body: string;
-}
-
 export default class SQSAdapter implements SqsAdapterInterface {
     private readonly sqs: SQSClient;
+    private readonly logger: LoggerInterface;
 
-    constructor() {
+    constructor(logger: LoggerInterface) {
+        this.logger = logger;
+
         try {
-            if (process.env.RUNNING_ENV) {
+            if (process.env.NODE_ENV === "production") {
                 this.sqs = new SQSClient({
                     region: process.env.AWS_DEFAULT_REGION,
                 });
-                logger.info(
+                this.logger.info(
                     "Initialized SQS client for production environment"
                 );
             } else {
@@ -48,13 +34,16 @@ export default class SQSAdapter implements SqsAdapterInterface {
                             process.env.AWS_SECRET_ACCESS_KEY ?? "",
                     },
                 });
-                logger.info("Initialized SQS client for local environment", {
-                    endpoint: process.env.AWS_SERVICES_ENDPOINT,
-                    region: process.env.AWS_DEFAULT_REGION,
-                });
+                this.logger.info(
+                    "Initialized SQS client for local environment",
+                    {
+                        endpoint: process.env.AWS_SERVICES_ENDPOINT,
+                        region: process.env.AWS_DEFAULT_REGION,
+                    }
+                );
             }
         } catch (error) {
-            logger.error("Failed to initialize SQS client", {
+            this.logger.error("Failed to initialize SQS client", {
                 error: error instanceof Error ? error.message : String(error),
             });
             throw new Error("SQS client initialization failed");
@@ -69,7 +58,7 @@ export default class SQSAdapter implements SqsAdapterInterface {
         };
 
         try {
-            logger.info(`Creating queue`, { name });
+            this.logger.info(`Creating queue`, { name });
             const command = new CreateQueueCommand(params);
             const response = await this.sqs.send(command);
 
@@ -77,7 +66,7 @@ export default class SQSAdapter implements SqsAdapterInterface {
                 throw new Error("Queue URL not received in response");
             }
 
-            logger.info(`Successfully created queue`, {
+            this.logger.info(`Successfully created queue`, {
                 name,
                 queueUrl: response.QueueUrl,
             });
@@ -86,7 +75,7 @@ export default class SQSAdapter implements SqsAdapterInterface {
                 success: response.QueueUrl,
             };
         } catch (error) {
-            logger.error("Error creating queue", {
+            this.logger.error("Error creating queue", {
                 name,
                 error: error instanceof Error ? error.message : String(error),
             });
@@ -100,7 +89,7 @@ export default class SQSAdapter implements SqsAdapterInterface {
 
     public async sendMessage(msg: string): Promise<string | { error: string }> {
         if (!process.env.QUEUE_URL) {
-            logger.error("QUEUE_URL environment variable not set");
+            this.logger.error("QUEUE_URL environment variable not set");
             return { error: "Queue URL not configured" };
         }
 
@@ -110,7 +99,7 @@ export default class SQSAdapter implements SqsAdapterInterface {
         };
 
         try {
-            logger.info("Sending message to queue", {
+            this.logger.info("Sending message to queue", {
                 queueUrl: params.QueueUrl,
                 messageLength: msg.length,
             });
@@ -122,14 +111,14 @@ export default class SQSAdapter implements SqsAdapterInterface {
                 throw new Error("Message ID not received in response");
             }
 
-            logger.info("Successfully sent message", {
+            this.logger.info("Successfully sent message", {
                 messageId: response.MessageId,
                 queueUrl: params.QueueUrl,
             });
 
             return response.MessageId;
         } catch (error) {
-            logger.error("Error sending message", {
+            this.logger.error("Error sending message", {
                 queueUrl: params.QueueUrl,
                 error: error instanceof Error ? error.message : String(error),
             });

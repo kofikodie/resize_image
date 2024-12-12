@@ -8,33 +8,24 @@ import { S3AdapterInterface } from "./S3AdapterInterface";
 import * as dotenv from "dotenv";
 import { StreamHelper } from "../stream-helpler";
 import { Readable } from "node:stream";
-import winston from "winston";
+import { LoggerInterface } from "../utils/logger/LoggerInterface";
 
 dotenv.config();
 
-const logger = winston.createLogger({
-    level: "info",
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json()
-    ),
-    transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: "error.log", level: "error" }),
-        new winston.transports.File({ filename: "combined.log" }),
-    ],
-});
-
 export default class S3Adapter implements S3AdapterInterface {
     private readonly s3: S3;
+    private readonly logger: LoggerInterface;
 
-    constructor() {
+    constructor(logger: LoggerInterface) {
+        this.logger = logger;
         try {
-            if (process.env.RUNNING_ENV) {
+            if (process.env.NODE_ENV === "production") {
                 this.s3 = new S3({
                     region: process.env.AWS_DEFAULT_REGION ?? "eu-west-1",
                 });
-                logger.info("Initialized S3 client for production environment");
+                this.logger.info(
+                    "Initialized S3 client for production environment"
+                );
             } else {
                 this.s3 = new S3({
                     endpoint: process.env.AWS_SERVICES_ENDPOINT ?? "",
@@ -46,7 +37,7 @@ export default class S3Adapter implements S3AdapterInterface {
                     },
                     forcePathStyle: true,
                 });
-                logger.info("Initialized S3 client for local environment");
+                this.logger.info("Initialized S3 client for local environment");
             }
         } catch (error) {
             logger.error("Failed to initialize S3 client", { error });
@@ -62,18 +53,18 @@ export default class S3Adapter implements S3AdapterInterface {
         };
 
         try {
-            logger.info(`Creating bucket: ${bucketName}`);
+            this.logger.info(`Creating bucket: ${bucketName}`);
             const command = new CreateBucketCommand(params);
             const response = await this.s3.send(command);
 
-            logger.info(`Successfully created bucket: ${bucketName}`, {
+            this.logger.info(`Successfully created bucket: ${bucketName}`, {
                 location: response.Location,
             });
             return {
                 success: response.Location!,
             };
         } catch (error) {
-            logger.error("Error creating bucket", {
+            this.logger.error("Error creating bucket", {
                 bucket: bucketName,
                 error: error instanceof Error ? error.message : String(error),
             });
@@ -93,7 +84,7 @@ export default class S3Adapter implements S3AdapterInterface {
         };
 
         try {
-            logger.info(`Fetching image`, { bucket: bucketName, key });
+            this.logger.info(`Fetching image`, { bucket: bucketName, key });
             const command = new GetObjectCommand(params);
             const response = await this.s3.send(command);
 
@@ -104,14 +95,14 @@ export default class S3Adapter implements S3AdapterInterface {
             const buffer = await StreamHelper.streamToBuffer(
                 response.Body as Readable
             );
-            logger.info(`Successfully retrieved image`, {
+            this.logger.info(`Successfully retrieved image`, {
                 bucket: bucketName,
                 key,
                 size: buffer.length,
             });
             return buffer;
         } catch (error) {
-            logger.error("Error retrieving image", {
+            this.logger.error("Error retrieving image", {
                 bucket: bucketName,
                 key,
                 error: error instanceof Error ? error.message : String(error),
@@ -138,7 +129,7 @@ export default class S3Adapter implements S3AdapterInterface {
         };
 
         try {
-            logger.info(`Storing image`, {
+            this.logger.info(`Storing image`, {
                 bucket: bucketName,
                 key,
                 name: imageName,
@@ -149,7 +140,7 @@ export default class S3Adapter implements S3AdapterInterface {
             const result = await this.s3.send(command);
 
             if (result.$metadata.httpStatusCode === 200) {
-                logger.info(`Successfully stored image`, {
+                this.logger.info(`Successfully stored image`, {
                     bucket: bucketName,
                     key,
                     name: imageName,
@@ -163,7 +154,7 @@ export default class S3Adapter implements S3AdapterInterface {
                 `Unexpected status code: ${result.$metadata.httpStatusCode}`
             );
         } catch (error) {
-            logger.error("Error storing image", {
+            this.logger.error("Error storing image", {
                 bucket: bucketName,
                 key,
                 name: imageName,

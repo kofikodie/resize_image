@@ -5,6 +5,8 @@ import SqsAdapter from "./adapters/SqsAdapter";
 import UploadImageController from "./controller/UploadImageController";
 import UploadImageService from "./service/UploadImageService";
 import fs from "fs";
+import DynamoDBAdapter from "./adapters/DynamoDBAdapter";
+import { LoggerService } from "./utils/logger/LoggerService";
 
 const app = express();
 app.use(fileUpload());
@@ -21,7 +23,12 @@ app.post("/upload", async (req, res) => {
     }
 
     const uploadController = new UploadImageController(
-        new UploadImageService(new SqsAdapter(), new S3Adapter())
+        new UploadImageService(
+            new SqsAdapter(LoggerService.getInstance()),
+            new S3Adapter(LoggerService.getInstance()),
+            new DynamoDBAdapter(LoggerService.getInstance()),
+            LoggerService.getInstance()
+        )
     );
 
     let imagesKeys: string[] = [];
@@ -53,7 +60,7 @@ app.post("/upload", async (req, res) => {
 
 app.get("/download/:key", async (req, res) => {
     const key = req.params.key;
-    const s3 = new S3Adapter();
+    const s3 = new S3Adapter(LoggerService.getInstance());
     const result = await s3.getImageByKey(process.env.BUCKET_NAME ?? "", key);
 
     if ("error" in result) {

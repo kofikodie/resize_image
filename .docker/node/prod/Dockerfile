@@ -28,7 +28,7 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/src ./
 
-ENV RUNNING_ENV="prod"
+ENV NODE_ENV=production
 
 EXPOSE 8888
 
