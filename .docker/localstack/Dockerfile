@@ -2,7 +2,7 @@ FROM localstack/localstack
 
 # Set environment variables if needed
 ENV DEBUG=0
-ENV SERVICES=s3,sqs
+ENV SERVICES=s3,sqs,dynamodb
 
 # Install dos2unix
 RUN apt-get update && apt-get install -y dos2unix
