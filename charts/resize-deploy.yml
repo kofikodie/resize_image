@@ -19,6 +19,7 @@ spec:
       labels:
         app: resize-deploy
     spec:
+      serviceAccountName: s3-account
       containers:
       - image: 317884193661.dkr.ecr.eu-west-1.amazonaws.com/resize-cluster:6ddc77301410ae6eed0b0e36d7c34bbe4dc3d46b
         name: resize-api
@@ -71,4 +72,6 @@ spec:
             configMapKeyRef:
               name: resize-cm
               key: BUCKET_NAME_TMP
+        - name: RUNNING_ENV
+          value: "production"
 status: {}
