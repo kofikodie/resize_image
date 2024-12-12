@@ -21,7 +21,7 @@ spec:
     spec:
       serviceAccountName: s3-account
       containers:
-      - image: 317884193661.dkr.ecr.eu-west-1.amazonaws.com/resize-cluster:6ddc77301410ae6eed0b0e36d7c34bbe4dc3d46b
+      - image: 317884193661.dkr.ecr.eu-west-1.amazonaws.com/resize-cluster:8d7eb9bfe8ef68d60cea41deaa857946eca99d8b
         name: resize-api
         ports:
           - containerPort: 8888 
