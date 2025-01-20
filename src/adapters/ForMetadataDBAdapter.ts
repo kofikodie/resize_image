@@ -1,14 +1,14 @@
 import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import {
     DynamoDBAdapterInterface,
-    ImageMetadata,
-} from "./DynamoDBAdapterInterface";
+    ForMetadataDBAdapterInterface,
+} from "./ports/ForMetadataDBAdapter.Interface";
 import * as dotenv from "dotenv";
 import { LoggerInterface } from "../utils/logger/LoggerInterface";
 
 dotenv.config();
 
-export default class DynamoDBAdapter implements DynamoDBAdapterInterface {
+export default class ForMetadataDBAdapter implements DynamoDBAdapterInterface {
     private readonly dynamodb: DynamoDB;
     private readonly tableName = "image_metadata";
     private readonly logger: LoggerInterface;
@@ -45,7 +45,7 @@ export default class DynamoDBAdapter implements DynamoDBAdapterInterface {
     }
 
     async putItem(
-        item: ImageMetadata
+        item: ForMetadataDBAdapterInterface
     ): Promise<{ success: boolean } | { error: string }> {
         try {
             this.logger.info("Putting item in DynamoDB", { id: item.id });

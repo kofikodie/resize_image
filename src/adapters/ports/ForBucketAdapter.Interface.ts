@@ -1,4 +1,4 @@
-export interface S3AdapterInterface {
+export interface ForBucketAdapterInterface {
     storeImage(
         buffer: Buffer,
         imageName: string,

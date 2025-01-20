@@ -4,7 +4,7 @@ import {
     PutObjectCommand,
     S3,
 } from "@aws-sdk/client-s3";
-import { S3AdapterInterface } from "./S3AdapterInterface";
+import { ForBucketAdapterInterface } from "./ports/ForBucketAdapter.Interface";
 import * as dotenv from "dotenv";
 import { StreamHelper } from "../stream-helpler";
 import { Readable } from "node:stream";
@@ -12,7 +12,7 @@ import { LoggerInterface } from "../utils/logger/LoggerInterface";
 
 dotenv.config();
 
-export default class S3Adapter implements S3AdapterInterface {
+export default class ForBucketAdapter implements ForBucketAdapterInterface {
     private readonly s3: S3;
     private readonly logger: LoggerInterface;
 

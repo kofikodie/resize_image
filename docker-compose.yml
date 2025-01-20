@@ -1,27 +1,28 @@
 services:
-  app:
-    container_name: app
-    tty: true
-    build:
-      context: .
-      dockerfile: .docker/node/dev/Dockerfile
-    command: ["npm", "run", "start:dev"]
-    volumes:
-      - app-source:/app
-    ports:
-      - "8888:8888"
-    depends_on:
-      - localstack
-    env_file:
-      - .env
+    app:
+        container_name: app
+        tty: true
+        build:
+            context: .
+            dockerfile: .docker/node/dev/Dockerfile
+        command: ["npm", "run", "start:dev"]
+        volumes:
+            - ./:/app
+            - /app/node_modules
+        ports:
+            - "8888:8888"
+        env_file:
+            - .env
+        environment:
+            - NODE_ENV=development
 
-  localstack:
-    container_name: localstack
-    build:
-      context: .
-      dockerfile: .docker/localstack/Dockerfile
-    volumes:
-      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    env_file:
-      - .env
+    localstack:
+        container_name: localstack
+        build:
+            context: .
+            dockerfile: .docker/localstack/Dockerfile
+        volumes:
+            - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+            - "/var/run/docker.sock:/var/run/docker.sock"
+        env_file:
+            - .env

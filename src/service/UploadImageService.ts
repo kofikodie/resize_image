@@ -1,19 +1,19 @@
 import fileUpload from "express-fileupload";
-import { S3AdapterInterface } from "../adapters/S3AdapterInterface";
-import { SqsAdapterInterface } from "../adapters/SqsAdapterInterface";
+import { ForBucketAdapterInterface } from "../adapters/ports/ForBucketAdapter.Interface";
+import { ForQueueAdapterInterface } from "../adapters/ports/ForQueueAdapter.Interface";
 import { UploadImageInterface } from "../controller/UploadImageController";
 import { randomUUID } from "crypto";
-import { DynamoDBAdapterInterface } from "../adapters/DynamoDBAdapterInterface";
+import { DynamoDBAdapterInterface } from "../adapters/ports/ForMetadataDBAdapter.Interface";
 import { LoggerInterface } from "../utils/logger/LoggerInterface";
 
 export default class UploadImageService implements UploadImageInterface {
-    messageBroker: SqsAdapterInterface;
-    bucketService: S3AdapterInterface;
+    messageBroker: ForQueueAdapterInterface;
+    bucketService: ForBucketAdapterInterface;
     dynamoDBService: DynamoDBAdapterInterface;
     logger: LoggerInterface;
     constructor(
-        messageBroker: SqsAdapterInterface,
-        bucketService: S3AdapterInterface,
+        messageBroker: ForQueueAdapterInterface,
+        bucketService: ForBucketAdapterInterface,
         dynamoDBService: DynamoDBAdapterInterface,
         logger: LoggerInterface
     ) {

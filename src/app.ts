@@ -1,11 +1,11 @@
 import express from "express";
 import fileUpload from "express-fileupload";
-import S3Adapter from "./adapters/S3Adapter";
-import SqsAdapter from "./adapters/SqsAdapter";
+import ForBucketAdapter from "./adapters/ForBucketAdapter";
+import SqsAdapter from "./adapters/ForQueueAdapter";
 import UploadImageController from "./controller/UploadImageController";
 import UploadImageService from "./service/UploadImageService";
 import fs from "fs";
-import DynamoDBAdapter from "./adapters/DynamoDBAdapter";
+import ForMetadataDBAdapter from "./adapters/ForMetadataDBAdapter";
 import { LoggerService } from "./utils/logger/LoggerService";
 
 const app = express();
@@ -25,8 +25,8 @@ app.post("/upload", async (req, res) => {
     const uploadController = new UploadImageController(
         new UploadImageService(
             new SqsAdapter(LoggerService.getInstance()),
-            new S3Adapter(LoggerService.getInstance()),
-            new DynamoDBAdapter(LoggerService.getInstance()),
+            new ForBucketAdapter(LoggerService.getInstance()),
+            new ForMetadataDBAdapter(LoggerService.getInstance()),
             LoggerService.getInstance()
         )
     );
@@ -60,7 +60,7 @@ app.post("/upload", async (req, res) => {
 
 app.get("/download/:key", async (req, res) => {
     const key = req.params.key;
-    const s3 = new S3Adapter(LoggerService.getInstance());
+    const s3 = new ForBucketAdapter(LoggerService.getInstance());
     const result = await s3.getImageByKey(process.env.BUCKET_NAME ?? "", key);
 
     if ("error" in result) {

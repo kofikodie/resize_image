@@ -4,12 +4,12 @@ import {
     CreateQueueCommand,
 } from "@aws-sdk/client-sqs";
 import * as dotenv from "dotenv";
-import { SqsAdapterInterface } from "./SqsAdapterInterface";
+import { ForQueueAdapterInterface } from "./ports/ForQueueAdapter.Interface";
 import { LoggerInterface } from "../utils/logger/LoggerInterface";
 
 dotenv.config();
 
-export default class SQSAdapter implements SqsAdapterInterface {
+export default class ForQueueAdapter implements ForQueueAdapterInterface {
     private readonly sqs: SQSClient;
     private readonly logger: LoggerInterface;
 

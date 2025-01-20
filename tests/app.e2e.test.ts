@@ -1,20 +1,22 @@
 import request from "supertest";
 import app from "../src/app";
-import S3Adapter from "../src/adapters/S3Adapter";
-import SQSAdapter from "../src/adapters/SqsAdapter";
+import ForBucketAdapter from "../src/adapters/ForBucketAdapter";
+import ForQueueAdapter from "../src/adapters/ForQueueAdapter";
+import { LoggerService } from "../src/utils/logger/LoggerService";
 
 describe("POST /upload", () => {
+    const logger = LoggerService.getInstance();
     beforeAll(() => {
-        const s3 = new S3Adapter();
+        const s3 = new ForBucketAdapter(logger);
         s3.createBucket(process.env.BUCKET_NAME_TMP ?? "");
 
-        const sqs = new SQSAdapter();
+        const sqs = new ForQueueAdapter(logger);
         sqs.createQueue(process.env.QUEUE_NAME ?? "");
     });
 
     it("should upload a single image and return a key", async () => {
-        const s3 = new S3Adapter();
-        const sqs = new SQSAdapter();
+        const s3 = new ForBucketAdapter(logger);
+        const sqs = new ForQueueAdapter(logger);
         const testImage = "test/test-image.png";
         const uploadUrl = "/upload";
         const mockFile = {
@@ -42,8 +44,8 @@ describe("POST /upload", () => {
     });
 
     it("should upload multiple images and return multiple keys", async () => {
-        const s3 = new S3Adapter();
-        const sqs = new SQSAdapter();
+        const s3 = new ForBucketAdapter(logger);
+        const sqs = new ForQueueAdapter(logger);
         const testImages = [
             "test/test-image-1.png",
             "test/test-image-2.png",
